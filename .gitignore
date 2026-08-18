@@ -1,0 +1,225 @@
+# ---------------------------------------------------------------------------
+# Seros product repository.
+#
+# This repository has no application code yet and no chosen language, so this
+# file is deliberately broad: it covers the common ecosystems so that the first
+# accidental artefact from a spike does not end up committed. Trim it once
+# ADR 0003 is accepted and the stack is known.
+# ---------------------------------------------------------------------------
+
+# --- Secrets and local configuration (most important section) ---
+.env
+.env.*
+!.env.example
+*.env
+secrets.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+id_rsa
+id_ed25519
+*.ppk
+credentials
+credentials.json
+service-account*.json
+gha-creds-*.json
+.netrc
+.npmrc
+.pypirc
+*.tfvars
+*.tfstate
+*.tfstate.*
+.terraform/
+kubeconfig
+*.kubeconfig
+
+# --- Customer or evaluation data (never in this repository) ---
+fixtures/real/
+corpus/
+*.thread.json
+exports/
+*.customer.*
+
+# --- Operating systems ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*~
+.fuse_hidden*
+.nfs*
+
+# --- Editors and IDEs ---
+.idea/
+.vscode/
+!.vscode/extensions.json
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+.history/
+.project
+.classpath
+.settings/
+*.iml
+.fleet/
+.zed/
+nbproject/
+
+# --- Logs, temp, local databases ---
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.pid
+*.seed
+*.pid.lock
+tmp/
+temp/
+.cache/
+*.sqlite
+*.sqlite3
+*.db
+dump.rdb
+
+# --- Node / JavaScript / TypeScript ---
+node_modules/
+.pnp
+.pnp.js
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+dist/
+build/
+out/
+.next/
+.nuxt/
+.svelte-kit/
+.astro/
+.turbo/
+.parcel-cache/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+.eslintcache
+.vite/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+.eggs/
+*.egg-info/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.pyre/
+.ruff_cache/
+.tox/
+.nox/
+htmlcov/
+.coverage
+.coverage.*
+.ipynb_checkpoints/
+Pipfile.lock.local
+
+# --- Ruby ---
+.bundle/
+vendor/bundle/
+*.gem
+.byebug_history
+
+# --- Go ---
+bin/
+*.test
+*.out
+vendor/
+
+# --- Rust ---
+target/
+**/*.rs.bk
+
+# --- JVM (Java, Kotlin, Scala) ---
+*.class
+*.jar
+*.war
+*.ear
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+.mvn/timing.properties
+target/
+
+# --- Elixir / Erlang ---
+_build/
+deps/
+*.beam
+erl_crash.dump
+
+# --- PHP ---
+vendor/
+composer.phar
+
+# --- .NET ---
+obj/
+[Bb]in/
+*.user
+*.suo
+
+# --- Swift / Xcode ---
+DerivedData/
+*.xcuserstate
+.build/
+Pods/
+
+# --- Infrastructure and containers ---
+.terragrunt-cache/
+.pulumi/
+*.retry
+.vagrant/
+docker-compose.override.yml
+
+# --- Build and package artefacts ---
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.7z
+*.rar
+*.dmg
+*.iso
+
+# --- Documentation build output ---
+site/
+_site/
+.docusaurus/
+public/build/
+
+# --- Tooling scratch ---
+.direnv/
+.tool-versions.local
+.scratch/
+scratch/
+TODO.local.md

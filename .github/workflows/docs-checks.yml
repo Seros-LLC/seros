@@ -1,0 +1,197 @@
+name: docs-checks
+
+# This repository has no application code yet (see docs/adr/0003-language-and-runtime.md),
+# so CI checks documents rather than builds. The checks below use only tools already
+# present on the runner and do not imply a language choice for the product.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    name: Documentation checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Relative Markdown links resolve
+        run: |
+          python3 - <<'PY'
+          import os, re, sys
+          LINK = re.compile(r'(?<!\!)\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)')
+          SKIP = ('http://', 'https://', 'mailto:', 'tel:', '#')
+          failures = []
+          checked = 0
+          for root, dirs, files in os.walk('.'):
+              dirs[:] = [d for d in dirs if d not in ('.git', 'node_modules')]
+              for name in files:
+                  if not name.endswith('.md'):
+                      continue
+                  path = os.path.join(root, name)
+                  with open(path, encoding='utf-8') as fh:
+                      text = fh.read()
+                  for target in LINK.findall(text):
+                      if target.startswith(SKIP):
+                          continue
+                      clean = target.split('#', 1)[0]
+                      if not clean:
+                          continue
+                      checked += 1
+                      resolved = os.path.normpath(os.path.join(root, clean))
+                      if not os.path.exists(resolved):
+                          failures.append(path + ' -> ' + target)
+          print('checked ' + str(checked) + ' relative links')
+          if failures:
+              print('BROKEN LINKS:')
+              for f in failures:
+                  print('  ' + f)
+              sys.exit(1)
+          print('all relative links resolve')
+          PY
+
+      - name: Every ADR has a Status
+        run: |
+          python3 - <<'PY'
+          import os, re, sys
+          ALLOWED = ('proposed', 'accepted', 'rejected', 'deprecated', 'superseded')
+          adr_dir = os.path.join('docs', 'adr')
+          if not os.path.isdir(adr_dir):
+              print('no ADR directory; nothing to check')
+              sys.exit(0)
+          failures = []
+          names = sorted(n for n in os.listdir(adr_dir) if n.endswith('.md'))
+          if not names:
+              failures.append(adr_dir + ': no ADRs found')
+          for name in names:
+              path = os.path.join(adr_dir, name)
+              with open(path, encoding='utf-8') as fh:
+                  lines = fh.read().splitlines()
+              idx = None
+              for i, line in enumerate(lines):
+                  if re.match(r'^##\s+Status\s*$', line.strip()):
+                      idx = i
+                      break
+              if idx is None:
+                  failures.append(path + ': no "## Status" section')
+                  continue
+              body = [l.strip() for l in lines[idx + 1:idx + 8] if l.strip()]
+              if not body:
+                  failures.append(path + ': Status section is empty')
+                  continue
+              first = body[0].lower().replace('*', '').replace('`', '')
+              if not any(first.startswith(a) for a in ALLOWED):
+                  failures.append(path + ': status "' + body[0][:60] + '" is not one of ' + ', '.join(ALLOWED))
+          if failures:
+              print('ADR STATUS PROBLEMS:')
+              for f in failures:
+                  print('  ' + f)
+              sys.exit(1)
+          print('all ' + str(len(names)) + ' ADRs carry a valid Status')
+          PY
+
+      - name: No committed secrets
+        run: |
+          python3 - <<'PY'
+          import os, re, sys
+          PATTERNS = [
+              ('private key block', re.compile(r'-{5}BEGIN [A-Z ]*PRIVATE KEY-{5}')),
+              ('aws access key id', re.compile(r'\b(?:AKIA|ASIA)[0-9A-Z]{16}\b')),
+              ('slack token', re.compile(r'\bxox[abpsr]-[0-9A-Za-z-]{10,}')),
+              ('slack app token', re.compile(r'\bxapp-[0-9A-Za-z-]{10,}')),
+              ('github token', re.compile(r'\bgh[pousr]_[0-9A-Za-z]{20,}')),
+              ('generic provider key', re.compile(r'\bsk-[0-9A-Za-z_-]{20,}')),
+              ('google api key', re.compile(r'\bAIza[0-9A-Za-z_-]{30,}')),
+              ('stripe secret key', re.compile(r'\b[sr]k_live_[0-9A-Za-z]{20,}')),
+              ('assigned secret literal', re.compile(r'(?i)\b(?:api[_-]?key|secret|password|passwd|access[_-]?token|refresh[_-]?token|client[_-]?secret)\b\s*[:=]\s*["\x27][A-Za-z0-9/+_-]{16,}["\x27]')),
+              ('private key in url', re.compile(r'(?i)://[^/\s:@]+:[^/\s:@]{8,}@')),
+          ]
+          SKIP_FILES = {os.path.normpath('.github/workflows/docs-checks.yml')}
+          SKIP_EXT = ('.png', '.jpg', '.jpeg', '.gif', '.webp', '.pdf', '.ico', '.woff', '.woff2', '.zip')
+          failures = []
+          scanned = 0
+          for root, dirs, files in os.walk('.'):
+              dirs[:] = [d for d in dirs if d not in ('.git', 'node_modules')]
+              for name in files:
+                  path = os.path.normpath(os.path.join(root, name))
+                  if path in SKIP_FILES or name.lower().endswith(SKIP_EXT):
+                      continue
+                  try:
+                      with open(path, encoding='utf-8') as fh:
+                          text = fh.read()
+                  except (UnicodeDecodeError, OSError):
+                      continue
+                  scanned += 1
+                  for label, pattern in PATTERNS:
+                      match = pattern.search(text)
+                      if match:
+                          line_no = text[:match.start()].count('\n') + 1
+                          failures.append(path + ':' + str(line_no) + ': ' + label)
+          print('scanned ' + str(scanned) + ' files for secret patterns')
+          if failures:
+              print('POSSIBLE SECRETS COMMITTED:')
+              for f in failures:
+                  print('  ' + f)
+              print('If this is a false positive, narrow the pattern; do not delete the check.')
+              sys.exit(1)
+          print('no secret patterns found')
+          PY
+
+      - name: Security controls marked implemented must link to an artefact
+        run: |
+          python3 - <<'PY'
+          import os, re, sys
+          path = os.path.join('docs', 'SECURITY-CONTROLS.md')
+          if not os.path.isfile(path):
+              print(path + ' is missing')
+              sys.exit(1)
+          LINK = re.compile(r'\[[^\]]+\]\(([^)\s]+)\)')
+          with open(path, encoding='utf-8') as fh:
+              lines = fh.read().splitlines()
+          failures = []
+          controls = 0
+          implemented = 0
+          for i, line in enumerate(lines, start=1):
+              stripped = line.strip()
+              if not stripped.startswith('|') or '[[TOM_' not in stripped:
+                  continue
+              cells = [c.strip() for c in stripped.strip('|').split('|')]
+              # A control row is a mapping-table row whose first cell is exactly one
+              # [[TOM_*]] token. Other tables may mention tokens in prose.
+              if not re.match(r'^\[\[TOM_[A-Z_0-9]+\]\]$', cells[0].replace('`', '').strip()):
+                  continue
+              controls += 1
+              status_cells = [c.replace('`', '').replace('*', '').strip().lower() for c in cells]
+              is_implemented = any(c == 'implemented' for c in status_cells)
+              if not any(c in ('implemented', 'not implemented', 'partial') for c in status_cells):
+                  failures.append('line ' + str(i) + ': control row has no recognised status cell')
+                  continue
+              if not is_implemented:
+                  continue
+              implemented += 1
+              targets = [t for t in LINK.findall(stripped)
+                         if not t.startswith(('http://', 'https://', 'mailto:', '#'))]
+              if not targets:
+                  failures.append('line ' + str(i) + ': marked Implemented with no linked artefact')
+                  continue
+              for target in targets:
+                  resolved = os.path.normpath(os.path.join(os.path.dirname(path), target.split('#', 1)[0]))
+                  if not os.path.exists(resolved):
+                      failures.append('line ' + str(i) + ': linked artefact does not exist: ' + target)
+          print('checked ' + str(controls) + ' control rows, ' + str(implemented) + ' marked implemented')
+          if not controls:
+              print('no control rows found; the mapping table is missing or malformed')
+              sys.exit(1)
+          if failures:
+              print('SECURITY CONTROL PROBLEMS:')
+              for f in failures:
+                  print('  ' + f)
+              sys.exit(1)
+          print('every implemented control links to an existing artefact')
+          PY

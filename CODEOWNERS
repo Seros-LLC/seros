@@ -1,0 +1,26 @@
+# Code owners for the Seros product repository.
+# Every path has an owner. While the company is one person, that owner is the founder;
+# the file exists so that adding a second reviewer is a one-line change rather than a
+# process decision made under pressure.
+
+# Default owner for everything.
+*                               @jrdurham54
+
+# Documentation.
+/docs/                          @jrdurham54
+
+# Architecture decision records are immutable once accepted. Changes to an existing ADR
+# should be a new, superseding ADR.
+/docs/adr/                      @jrdurham54
+
+# Security control mapping backs the promises in the legal pack. Any status change here
+# is a claim about what actually exists.
+/docs/SECURITY-CONTROLS.md      @jrdurham54
+
+# Scope changes are customer-visible and re-trigger consent.
+/docs/INTEGRATIONS.md           @jrdurham54
+
+# CI, licence and repository configuration.
+/.github/                       @jrdurham54
+/LICENSE                        @jrdurham54
+/CODEOWNERS                     @jrdurham54
