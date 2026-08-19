@@ -3,12 +3,19 @@
 This repository will hold the Seros product: the service that turns what a team already
 said in chat into confirmed, owned, dated tasks in the tracker the team already pays for.
 
-**Status: pre-code.** There is no application code here yet, and that is deliberate. The
-language, runtime, framework, hosting target and model provider have not been chosen. See
-[docs/adr/0003-language-and-runtime.md](docs/adr/0003-language-and-runtime.md) and
-[docs/adr/0004-model-provider-strategy.md](docs/adr/0004-model-provider-strategy.md);
-both are PROPOSED, neither is accepted. Writing code before those are decided would decide
-them by accident.
+**Status: specified, and now implemented elsewhere.** This repository is still the
+specification. The application itself lives in
+[Seros-LLC/seros-app](https://github.com/Seros-LLC/seros-app) (private), built against
+the brief in [docs/IMPLEMENTATION-BRIEF.md](docs/IMPLEMENTATION-BRIEF.md).
+
+The language question is settled: [ADR 0005](docs/adr/0005-language-and-runtime-typescript.md)
+records TypeScript on Node and supersedes [ADR 0003](docs/adr/0003-language-and-runtime.md),
+with the two competing spikes committed under [`spikes/`](spikes) and an honest account of
+which parts of 0003's method were skipped. The model provider question is **not** settled:
+[ADR 0004](docs/adr/0004-model-provider-strategy.md) is still PROPOSED and no vendor is
+chosen. The application runs a local Qwen 7b through the abstraction that ADR requires, with
+an ordered transport chain so a hosted model can go in front later and the local one becomes
+its fallback.
 
 What exists today is the specification: what v0 is, what the data looks like, what the
 security controls have to be, what the integrations may touch, how a non-deterministic

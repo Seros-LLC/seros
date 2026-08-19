@@ -2,7 +2,13 @@
 
 ## Status
 
-**Proposed. Not accepted.** No language, runtime, framework or hosting target has been
+**Superseded by [ADR 0005](0005-language-and-runtime-typescript.md), 2026-08-18.** The
+decision recorded there is TypeScript on Node. This ADR is kept because the question, the
+method and the disqualifying constraints it names are still the reason that decision is
+defensible. Read 0005 for what was actually measured, including the parts of this method
+that were skipped.
+
+*Original status when written:* **Proposed. Not accepted.** No language, runtime, framework or hosting target has been
 chosen. This ADR exists so that the choice is made deliberately, with evidence, rather than
 by whoever writes the first file. Nothing in this repository may assume an answer.
 

@@ -1,0 +1,31 @@
+{
+  "name": "seros-spike-typescript",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "migrate": "node --experimental-strip-types src/db/migrate.ts",
+    "start": "node --experimental-strip-types src/main.ts",
+    "worker": "node --experimental-strip-types src/queue/worker-main.ts",
+    "smoke": "node --experimental-strip-types src/smoke.ts",
+    "eval": "node --experimental-strip-types src/eval/run-eval.ts",
+    "tenant-lint": "node --experimental-strip-types scripts/tenant-lint.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run typecheck && npm run tenant-lint && node --experimental-strip-types --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@fastify/formbody": "^9.0.0",
+    "better-sqlite3": "^13.0.3",
+    "drizzle-orm": "^0.45.2",
+    "fastify": "^5.12.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^26.2.0",
+    "drizzle-kit": "^0.31.10",
+    "typescript": "^7.0.2"
+  }
+}

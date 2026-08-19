@@ -1,0 +1,31 @@
+Decide the language question the way the ADR asked to be asked, and record what that actually cost
+
+ADR 0003 refused to pick a stack and named the evidence that would settle it: the same
+vertical slice built twice, an evaluation harness in each, a deliberate 2am breakage, an
+honest familiarity score, and a contractor price check. It set a deadline of "before the
+first line of application code" and warned that the alternative was deciding by accident.
+
+Both spikes exist and are committed here, dependencies gitignored, source intact. The
+decision is TypeScript on Node, and ADR 0005 records it with the reasoning attached:
+the TypeScript spike expressed the two constraints ADR 0003 called disqualifying as
+structural facts rather than conventions -- a workspace scope that cannot be built without
+a workspace and has no raw database handle, and a confirmation proof the tracker writer
+demands, so "no write without a human" is a compile error rather than a review comment.
+
+What that ADR also records is where the method was not followed. The Python spike never
+wrote its measurements file, so the line-and-hours comparison the ADR asked for does not
+exist and the two were compared by reading them. The familiarity score was never taken.
+No contractor was asked to price a second tracker integration. Those are written down as
+skipped rather than quietly dropped, because an ADR that only lists the evidence that
+agreed with it is an advertisement.
+
+The evaluation-harness test, which 0003 called decisive, was answered late but honestly:
+it exists, it scores a 217-example golden set across a threshold sweep, and it earned its
+keep immediately by proving that a family of confident false positives could not be fixed
+by any threshold. The prompt changed instead, and detection precision went from 81.0% to
+100.0% at 95.8% recall.
+
+Also here: the implementation brief the application was actually built from, and a note in
+the README that this repository is now the specification rather than the whole story. The
+application lives in Seros-LLC/seros-app. ADR 0004 stays proposed, because no model vendor
+has been chosen and pretending otherwise would repeat the mistake 0003 was written to stop.
