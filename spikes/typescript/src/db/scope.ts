@@ -152,7 +152,11 @@ export class WorkspaceScope {
     )).get();
     if (existing) return { draft: existing, created: false };
     const row = {
-      ...input, workspaceId: this.workspaceId, id: randomUUID(),
+      ...input,
+      proposedOwnerId: input.proposedOwnerId ?? null,
+      dueDate: input.dueDate ?? null,
+      trackerTaskId: input.trackerTaskId ?? null,
+      workspaceId: this.workspaceId, id: randomUUID(),
       status: 'pending' as const, createdAt: Date.now(),
     };
     this.db.insert(drafts).values(row).run();

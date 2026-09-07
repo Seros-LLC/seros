@@ -6,20 +6,20 @@
     "node": ">=22.18"
   },
   "scripts": {
-    "migrate": "node --experimental-strip-types src/db/migrate.ts",
-    "start": "node --experimental-strip-types src/main.ts",
-    "worker": "node --experimental-strip-types src/queue/worker-main.ts",
-    "smoke": "node --experimental-strip-types src/smoke.ts",
-    "eval": "node --experimental-strip-types src/eval/run-eval.ts",
-    "tenant-lint": "node --experimental-strip-types scripts/tenant-lint.ts",
+    "migrate": "node --experimental-transform-types src/db/migrate.ts",
+    "start": "node --experimental-transform-types src/main.ts",
+    "worker": "node --experimental-transform-types src/queue/worker-main.ts",
+    "smoke": "node --experimental-transform-types src/smoke.ts",
+    "eval": "node --experimental-transform-types src/eval/run-eval.ts",
+    "tenant-lint": "node --experimental-transform-types scripts/tenant-lint.ts",
     "typecheck": "tsc --noEmit",
-    "test": "npm run typecheck && npm run tenant-lint && node --experimental-strip-types --test test/*.test.ts"
+    "test": "npm run typecheck && npm run tenant-lint && node --experimental-transform-types --test test/*.test.ts"
   },
   "dependencies": {
     "@fastify/formbody": "^9.0.0",
     "better-sqlite3": "^13.0.3",
     "drizzle-orm": "^0.45.2",
-    "fastify": "^5.12.0",
+    "fastify": "^5.12.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {
