@@ -1,5 +1,9 @@
 # Seros — Company Overview
 
+> **2026-09-19 — Seros, LLC is now a solution development company.** The Slack-to-tracker product
+> described below is paused and is not deployed or sold. See `business/PIVOT-DECISION.md`.
+
+
 ## Summary
 
 Seros is a Vercel-hosted SaaS platform that transforms selected Slack-channel commitments into human-approved task tracker items. It bridges the gap between async team communication (Slack) and structured, auditable task management.
