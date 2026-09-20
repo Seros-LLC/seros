@@ -3,10 +3,12 @@
 This repository will hold the Seros product: the service that turns what a team already
 said in chat into confirmed, owned, dated tasks in the tracker the team already pays for.
 
-**Status: specified, and now implemented elsewhere.** This repository is still the
-specification. The application itself lives in
-[Seros-LLC/seros-app](https://github.com/Seros-LLC/seros-app) (private), built against
-the brief in [docs/IMPLEMENTATION-BRIEF.md](docs/IMPLEMENTATION-BRIEF.md).
+**Status: specified; the implementation is paused.** This repository is the specification.
+The application itself lives in [Seros-LLC/app](https://github.com/Seros-LLC/app), built
+against the brief in [docs/IMPLEMENTATION-BRIEF.md](docs/IMPLEMENTATION-BRIEF.md). Seros,
+LLC is now a [solution development company](https://seros.dev) and this product is not
+deployed or sold — see [COMPANY.md](COMPANY.md). The specification is published because the
+engineering reasoning in it stands on its own.
 
 The language question is settled: [ADR 0005](docs/adr/0005-language-and-runtime-typescript.md)
 records TypeScript on Node and supersedes [ADR 0003](docs/adr/0003-language-and-runtime.md),

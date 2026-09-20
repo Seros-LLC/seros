@@ -1,46 +1,61 @@
 # Seros — Company Overview
 
-> **2026-09-19 — Seros, LLC is now a solution development company.** The Slack-to-tracker product
-> described below is paused and is not deployed or sold. See `business/PIVOT-DECISION.md`.
+Seros, LLC is a solution development company based in Georgia, USA. We scope a business
+problem in writing, build the system to a fixed scope, and maintain it after it ships.
 
+Positioning changed on 2026-09-19. The decision record is `business/PIVOT-DECISION.md`;
+it supersedes the product-only framing in the business pack.
 
-## Summary
+## What we sell
 
-Seros is a Vercel-hosted SaaS platform that transforms selected Slack-channel commitments into human-approved task tracker items. It bridges the gap between async team communication (Slack) and structured, auditable task management.
+| Stage | What happens |
+|---|---|
+| Discovery | A paid discovery sprint produces a written specification the client owns, whether or not we build it. |
+| Build | Fixed scope, agreed before work starts. No open-ended hourly drift. |
+| Handover | Client owns the code, the infrastructure, and the accounts. No lock-in. |
+| Maintain | Optional retainer for the system after delivery. |
 
-## Mission
-
-Turn Slack channel commitments into verified, human-reviewed tasks — with full audit trail and production-ready deployment.
-
-## Core Product
-
-- **Slack → Tracker pipeline**: Monitors Slack channels for commitment mentions and surfaces them as tracked tasks.
-- **Human approval gate**: Every task enters a review queue before it's marked complete — no action is taken without explicit consent.
-- **Vercel deployment**: The app deploys to `app.seros.dev` on Vercel, with a single-environment, zero-downtime production setup.
-- **Audit trail**: All task state changes are logged and immutable, providing a compliance-ready record.
-
-## Key Metrics (as of this write)
-
-| Metric | Value |
-|--------|-------|
-| Hosting | Vercel (app.seros.dev) |
-| Framework | TypeScript/Node |
-| Deployment status | BLOCKED — production env vars must satisfy fail-closed boot contract |
-| Integration readiness | Real (Slack, not demo flows) |
-| Security posture | Single reviewable migration-backed commits; push/deploy blocked until env gates pass |
+Revenue is project fees and retainers, not subscription. The only publicly stated number is
+the professional services rate in `website/site.json` (`PROF_SERVICES_RATE`, $150/hour).
+Project prices are quoted after discovery.
 
 ## Status
 
-- **Production-ready**: Not yet. The codebase has a `fail-closed` boot contract that requires production environment variables to be set before any deploy can proceed.
-- **Integration readiness**: Real (Slack integration, not synthetic demo flows).
-- **Security work**: Single reviewable migration-backed commits; push/deploy is blocked until production env vars satisfy the fail-closed boot contract.
+- **Clients shipped:** none. The site claims no clients, logos, testimonials, or results.
+- **Services motion:** live on seros.dev — services, work, engagements, and contact pages.
+- **Target market:** not yet settled (industry and business size are open questions).
+- **Delivery model:** not yet settled (solo, subcontracted, or hired-for). No capacity
+  claim appears publicly until it is.
 
-## Next Steps
+## The paused product
 
-1. Set production environment variables satisfying the fail-closed boot contract.
-2. Run `npm run verify` (typecheck + tenancy check + unit tests).
-3. Push and deploy to Vercel.
+The Slack-to-tracker application in `app/` is **paused, not cancelled**. It is not
+deployed, not sold, and has no sign-up. It remains public as evidence of delivery
+capability, and it is referenced from /work on the site.
 
----
+Its engineering invariant still holds and is the thing worth showing: no task is written to
+a customer's tracker without a recorded human confirmation, enforced at the type level
+rather than by convention.
 
-*Generated from repo context at `/home/jrdur/repos/seros/company.md`*
+Undecided: whether app.seros.dev is eventually shut down, open-sourced, or resumed.
+
+## Repositories
+
+| Repo | Visibility | What it is |
+|---|---|---|
+| `website` | public | seros.dev — marketing site and generated legal pages |
+| `app` | public | The paused Slack-to-tracker application |
+| `seros` | public | Product specification: architecture, data model, ADRs, security controls |
+| `.github` | public | Org profile and community health files |
+| `business` | private | Business plan, pricing internals, metrics, risk register |
+| `legal` | private | Policies, contracts, MSA/SOW templates, formation checklist |
+
+## Open assumptions
+
+Tracked in `business/METRICS.md`:
+
+- **PV1** — businesses in the founder's reachable network will pay for scoped custom builds.
+- **PV2** — a paid discovery sprint is an acceptable first step for buyers.
+- **PV3** — $150/hour is defensible for this market.
+
+If PV1 is wrong, the services motion has no pipeline and the pivot buys nothing.

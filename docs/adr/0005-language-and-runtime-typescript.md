@@ -63,7 +63,7 @@ worth doing.
   abstraction exists from the first model call (`src/provider/`), tenant scoping is a
   structural constraint rather than a convention (and a build-failing check now enforces that
   no module reaches around it), and this ADR supersedes 0003 with its evidence attached.
-- The application lives in [`Seros-LLC/seros-app`](https://github.com/Seros-LLC/seros-app),
+- The application lives in [`Seros-LLC/app`](https://github.com/Seros-LLC/app),
   private, and not yet in this repository. Merging it here is a separate decision, because it
   changes what this repository is: today it is the specification, and the specification has
   been usefully independent of the thing it specifies.
