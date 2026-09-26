@@ -1,10 +1,15 @@
 # Seros — Company Overview
 
-Seros, LLC is a solution development company based in Georgia, USA. We scope a business
-problem in writing, build the system to a fixed scope, and maintain it after it ships.
+Seros, LLC is an AI and agentic consulting firm based in Georgia, USA. We advise businesses
+on where AI and AI agents genuinely pay off, then design, build and run them to a fixed scope,
+with a person approving every consequential step.
 
-Positioning changed on 2026-09-19. The decision record is `business/PIVOT-DECISION.md`;
-it supersedes the product-only framing in the business pack.
+Services: AI strategy and readiness assessment, advisory retainer, agentic workflow
+automation, AI-native custom CRM, custom builds and integrations, and care plans.
+
+Positioning history: SaaS product → solution development (2026-09-19,
+`business/PIVOT-DECISION.md`) → AI and agentic consulting (2026-09-25,
+`business/DECISION-AI-CONSULTING.md`).
 
 ## What we sell
 
