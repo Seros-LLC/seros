@@ -2,7 +2,12 @@
 
 ## Status
 
-**Proposed. Not accepted.** No provider is chosen and none is named here as chosen. What is
+**Proposed. Not accepted.** No provider is formally chosen by this record.
+
+*Note (2026-09-26):* before the application was paused, its production deployment was
+configured with Google Gemini via the OpenAI-compatible endpoint (`http,ollama` chain), and
+`/health?deep=1` verified it live on 2026-09-12. That is an operational fact, not an acceptance
+of this ADR. Accept or supersede this record if the product resumes. What is
 proposed is the *shape* of the dependency: an abstraction from the first call, a cheap-first
 cascade, and a tested ability to leave.
 

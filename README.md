@@ -6,18 +6,19 @@ said in chat into confirmed, owned, dated tasks in the tracker the team already 
 **Status: specified; the implementation is paused.** This repository is the specification.
 The application itself lives in [Seros-LLC/app](https://github.com/Seros-LLC/app), built
 against the brief in [docs/IMPLEMENTATION-BRIEF.md](docs/IMPLEMENTATION-BRIEF.md). Seros,
-LLC is now a [solution development company](https://seros.dev) and this product is not
+LLC is now an [AI and agentic consulting firm](https://seros.dev) and this product is not
 deployed or sold — see [COMPANY.md](COMPANY.md). The specification is published because the
 engineering reasoning in it stands on its own.
 
 The language question is settled: [ADR 0005](docs/adr/0005-language-and-runtime-typescript.md)
 records TypeScript on Node and supersedes [ADR 0003](docs/adr/0003-language-and-runtime.md),
 with the two competing spikes committed under [`spikes/`](spikes) and an honest account of
-which parts of 0003's method were skipped. The model provider question is **not** settled:
-[ADR 0004](docs/adr/0004-model-provider-strategy.md) is still PROPOSED and no vendor is
-chosen. The application runs a local Qwen 7b through the abstraction that ADR requires, with
-an ordered transport chain so a hosted model can go in front later and the local one becomes
-its fallback.
+which parts of 0003's method were skipped. The model provider question is formally open:
+[ADR 0004](docs/adr/0004-model-provider-strategy.md) is still PROPOSED. In practice, before
+the application was paused its production deployment ran Google Gemini (via the
+OpenAI-compatible endpoint) in front of the local-Qwen fallback, through the abstraction and
+ordered transport chain that ADR requires. Development and tests run local Qwen 7b or the
+deterministic fake.
 
 What exists today is the specification: what v0 is, what the data looks like, what the
 security controls have to be, what the integrations may touch, how a non-deterministic
