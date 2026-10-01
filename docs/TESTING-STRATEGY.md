@@ -1,5 +1,7 @@
 # Testing strategy
 
+> **Specification for the paused Slack-to-tracker product.** Kept as a reference; it does not describe a live service, a price, or a customer commitment.
+
 Working draft. Nothing is built. This document describes how to test a system whose core
 component is a language model that will not give the same answer twice, in a repository
 that has not chosen a language or a test framework.

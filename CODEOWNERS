@@ -17,7 +17,8 @@
 # is a claim about what actually exists.
 /docs/SECURITY-CONTROLS.md      @jrdurham54
 
-# Scope changes are customer-visible and re-trigger consent.
+# Historical product rule: integration scope changes were customer-visible and would have
+# re-triggered consent.
 /docs/INTEGRATIONS.md           @jrdurham54
 
 # CI, licence and repository configuration.

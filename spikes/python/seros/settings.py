@@ -4,6 +4,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Placeholder only: the fallback below is not a real secret, and this spike is not for production.
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "spike-only-not-a-real-secret")
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
 ALLOWED_HOSTS = ["*"]

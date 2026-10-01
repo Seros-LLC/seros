@@ -1,66 +1,38 @@
 # Seros — Company Overview
 
-Seros, LLC is an AI and agentic consulting firm based in Georgia, USA. We advise businesses
-on where AI and AI agents genuinely pay off, then design, build and run them to a fixed scope,
-with a person approving every consequential step.
+Seros, LLC is an AI and agentic consulting firm. We advise businesses on where AI and AI
+agents pay off, then design, build and run them to an agreed scope, with a person approving
+every consequential step.
 
-Services: AI strategy and readiness assessment, advisory retainer, agentic workflow
-automation, AI-native custom CRM, custom builds and integrations, and care plans.
+## Offers
 
-Positioning history: SaaS product → solution development (2026-09-19,
-`business/PIVOT-DECISION.md`) → AI and agentic consulting (2026-09-25,
-`business/DECISION-AI-CONSULTING.md`).
+- AI strategy and readiness assessment
+- Advisory retainer
+- Agentic workflow automation
+- AI-native custom CRM
+- Custom builds and integrations
+- Care plan
 
-## What we sell
+Time-and-materials work is billed at $150/hour. Fixed-scope work is quoted per engagement.
 
-| Stage | What happens |
-|---|---|
-| Discovery | A paid discovery sprint produces a written specification the client owns, whether or not we build it. |
-| Build | Fixed scope, agreed before work starts. No open-ended hourly drift. |
-| Handover | Client owns the code, the infrastructure, and the accounts. No lock-in. |
-| Maintain | Optional retainer for the system after delivery. |
+## Delivery evidence: the paused product
 
-Revenue is project fees and retainers, not subscription. The only publicly stated number is
-the professional services rate in `website/site.json` (`PROF_SERVICES_RATE`, $150/hour).
-Project prices are quoted after discovery.
-
-## Status
-
-- **Clients shipped:** none. The site claims no clients, logos, testimonials, or results.
-- **Services motion:** live on seros.dev — services, work, engagements, and contact pages.
-- **Target market:** not yet settled (industry and business size are open questions).
-- **Delivery model:** not yet settled (solo, subcontracted, or hired-for). No capacity
-  claim appears publicly until it is.
-
-## The paused product
-
-The Slack-to-tracker application in `app/` is **paused, not cancelled**. It is not
-deployed, not sold, and has no sign-up. It remains public as evidence of delivery
-capability, and it is referenced from /work on the site.
-
-Its engineering invariant still holds and is the thing worth showing: no task is written to
-a customer's tracker without a recorded human confirmation, enforced at the type level
+Seros previously built a Slack-to-tracker application. It is **paused**: not deployed, not
+sold, and with no sign-up. Its source is public at
+[Seros-LLC/app](https://github.com/Seros-LLC/app) as evidence of how we build, and it is
+described at [seros.dev/work](https://seros.dev/work). Its core invariant is that no task is
+written to a tracker without a recorded human confirmation, enforced by the type system
 rather than by convention.
 
-Undecided: whether app.seros.dev is eventually shut down, open-sourced, or resumed.
+## Public repositories
 
-## Repositories
+| Repo | What it is |
+|---|---|
+| [Seros-LLC/website](https://github.com/Seros-LLC/website) | seros.dev and its generated legal pages |
+| [Seros-LLC/app](https://github.com/Seros-LLC/app) | The paused Slack-to-tracker application |
+| [Seros-LLC/seros](https://github.com/Seros-LLC/seros) | The paused product's specification: architecture, data model, ADRs, security controls |
+| [Seros-LLC/.github](https://github.com/Seros-LLC/.github) | Org profile and community health files |
 
-| Repo | Visibility | What it is |
-|---|---|---|
-| `website` | public | seros.dev — marketing site and generated legal pages |
-| `app` | public | The paused Slack-to-tracker application |
-| `seros` | public | Product specification: architecture, data model, ADRs, security controls |
-| `.github` | public | Org profile and community health files |
-| `business` | private | Business plan, pricing internals, metrics, risk register |
-| `legal` | private | Policies, contracts, MSA/SOW templates, formation checklist |
+## Contact
 
-## Open assumptions
-
-Tracked in `business/METRICS.md`:
-
-- **PV1** — businesses in the founder's reachable network will pay for scoped custom builds.
-- **PV2** — a paid discovery sprint is an acceptable first step for buyers.
-- **PV3** — $150/hour is defensible for this market.
-
-If PV1 is wrong, the services motion has no pipeline and the pivot buys nothing.
+[team@seros.dev](mailto:team@seros.dev) or [seros.dev/contact](https://seros.dev/contact).

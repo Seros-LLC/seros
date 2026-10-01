@@ -1,5 +1,7 @@
 # Spikes
 
+**Archived evidence for ADR 0005; not maintained; do not run in production.**
+
 Two implementations of the same vertical slice, built to decide
 [ADR 0003](../docs/adr/0003-language-and-runtime.md) with evidence instead of taste. The
 decision and what it actually rested on are in

@@ -1,5 +1,7 @@
 # Data model — v0
 
+> **Specification for the paused Slack-to-tracker product.** Kept as a reference; it does not describe a live service, a price, or a customer commitment.
+
 Working draft. Nothing here has been built. This document defines the entities the v0 loop
 needs, what each field is for, which fields are customer content, and how long each table
 is allowed to keep its rows.

@@ -35,7 +35,7 @@ call, so raw language throughput is close to irrelevant. What matters is iterati
 how quickly one person can debug production at 2am, the maturity of the model and
 integration tooling, and whether a future hire is plausible.
 
-The counter-pressure: the founder ships an iOS app under a separate company, so there is
+The counter-pressure: the founder has prior mobile development experience, so there is
 existing competence somewhere in that direction. Familiarity is a legitimate input to this
 decision and should be weighed openly rather than pretended away.
 

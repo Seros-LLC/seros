@@ -1,8 +1,8 @@
 name: docs-checks
 
-# This repository has no application code yet (see docs/adr/0003-language-and-runtime.md),
-# so CI checks documents rather than builds. The checks below use only tools already
-# present on the runner and do not imply a language choice for the product.
+# This repository is the specification of a paused product. The application (TypeScript on
+# Node, see docs/adr/0005-language-and-runtime-typescript.md) lives in Seros-LLC/app, so CI
+# here checks documents rather than builds. The checks use only tools already on the runner.
 
 on:
   push:

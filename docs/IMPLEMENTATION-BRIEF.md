@@ -1,5 +1,7 @@
 # Implementation brief — v0
 
+> **Specification for the paused Slack-to-tracker product.** Kept as a reference; it does not describe a live service, a price, or a customer commitment.
+
 Sources: ARCHITECTURE.md, DATA-MODEL.md, SECURITY-CONTROLS.md, TESTING-STRATEGY.md, INTEGRATIONS.md, ADR 0002, ADR 0004. Field names, enum values and class tags are quoted exactly. `[D]` = the spec implies but does not state it; it is an implementation decision (see §6).
 
 Content classes: `CONTENT` (never logged, encrypted at rest, deleted per retention, minimised before a provider), `IDENTITY` (never logged in plain form, pseudonymised in prompts), `METADATA` (loggable, survives content deletion), `SECRET` (per-workspace key; never logged, rendered, exported or sent to a provider).

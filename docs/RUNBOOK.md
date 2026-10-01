@@ -1,5 +1,7 @@
 # Runbook — on-call for one person
 
+> **Specification for the paused Slack-to-tracker product.** Kept as a reference; it does not describe a live service, a price, or a customer commitment.
+
 Working draft. Nothing is built, so nothing here has been executed. It is written now
 because the operations checklist is right that runbooks get written the first time an alert
 fires, and the first time is the worst time to be writing one.

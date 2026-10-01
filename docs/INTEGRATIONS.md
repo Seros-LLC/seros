@@ -1,5 +1,7 @@
 # Integrations — scopes, limits, tokens and failure behaviour
 
+> **Specification for the paused Slack-to-tracker product.** Kept as a reference; it does not describe a live service, a price, or a customer commitment.
+
 Working draft. Nothing is built. This document states exactly what Seros would ask a
 customer for, why each request is necessary, what it reads, what it writes, and what stops
 working if a scope is refused.

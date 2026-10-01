@@ -80,3 +80,16 @@ If the evaluation and prompt-iteration work turns out to want a notebook and a s
 stack — the argument ADR 0003 made for Option A, and the strongest argument against this
 decision — the harness is small, offline, and reads a JSON corpus. Rewriting it in Python
 while leaving the application alone is a day's work and would not be an admission of anything.
+
+## Update (2026-10-01)
+
+This note records later facts; the accepted text above is unchanged.
+
+- The application repository, [`Seros-LLC/app`](https://github.com/Seros-LLC/app), is now
+  public. The Consequences section's "private" described it as of the decision date. The
+  product itself is paused: not deployed and not sold.
+- A hosted model was put in front of the local one, as the transport chain anticipated. Before
+  the pause, the production deployment ran Google Gemini through its OpenAI-compatible
+  endpoint (`http,ollama` chain), with local Qwen (`qwen2.5:7b-instruct`) as the fallback
+  behind it. That is an operational fact, not an acceptance of
+  [ADR 0004](0004-model-provider-strategy.md), which remains proposed.

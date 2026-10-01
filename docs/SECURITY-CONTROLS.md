@@ -1,5 +1,7 @@
 # Security controls — the engineering backlog behind the legal pack
 
+> **Specification for the paused Slack-to-tracker product.** Kept as a reference; it does not describe a live service, a price, or a customer commitment.
+
 Working draft. **Every control on this page is `Not implemented`, because no code exists.**
 That is the honest status and it is the point of the document.
 

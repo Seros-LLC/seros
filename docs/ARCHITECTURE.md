@@ -1,5 +1,7 @@
 # Architecture — v0
 
+> **Specification for the paused Slack-to-tracker product.** Kept as a reference; it does not describe a live service, a price, or a customer commitment.
+
 Working draft. Nothing described here has been built. This document describes the *shape*
 of the v0 system: the components, the flow between them, the boundaries that matter, and
 the failure behaviour. It deliberately does not name a language, framework, database
