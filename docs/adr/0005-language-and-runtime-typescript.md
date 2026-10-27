@@ -63,10 +63,10 @@ worth doing.
   abstraction exists from the first model call (`src/provider/`), tenant scoping is a
   structural constraint rather than a convention (and a build-failing check now enforces that
   no module reaches around it), and this ADR supersedes 0003 with its evidence attached.
-- The application lives in [`Seros-LLC/app`](https://github.com/Seros-LLC/app),
-  private, and not yet in this repository. Merging it here is a separate decision, because it
-  changes what this repository is: today it is the specification, and the specification has
-  been usefully independent of the thing it specifies.
+- The application implementation lived in a separate repository and was not part of this
+  repository at the time of the decision. It has since been retired; the essential implementation
+  facts are summarized in [the implementation archive](../APP-ARCHIVE.md). This repository
+  remains the specification and archived evidence, independent of a deployed service.
 - **The reversal cost is unchanged and low.** ADR 0003's own observation holds: the durable
   assets are the prompts, the golden set, the routing data and the integration knowledge, and
   all four are portable. The golden set is JSON, and the prompts are one small versioned file.
@@ -85,9 +85,9 @@ while leaving the application alone is a day's work and would not be an admissio
 
 This note records later facts; the accepted text above is unchanged.
 
-- The application repository, [`Seros-LLC/app`](https://github.com/Seros-LLC/app), is now
-  public. The Consequences section's "private" described it as of the decision date. The
-  product itself is paused: not deployed and not sold.
+- The former application implementation was public for a period and is now retired. The
+  product itself remains paused: not deployed and not sold. Its essential implementation facts
+  are preserved in [the implementation archive](../APP-ARCHIVE.md).
 - A hosted model was put in front of the local one, as the transport chain anticipated. Before
   the pause, the production deployment ran Google Gemini through its OpenAI-compatible
   endpoint (`http,ollama` chain), with local Qwen (`qwen2.5:7b-instruct`) as the fallback
