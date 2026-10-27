@@ -1,4 +1,4 @@
-![Seros, LLC — AI and agentic consulting. Advice in writing. Builds to a fixed scope.](https://raw.githubusercontent.com/Seros-LLC/.github/main/profile/seros-banner.png)
+![Seros, LLC — AI and agentic consulting: assess, build, and hand over AI systems with people in control](https://raw.githubusercontent.com/Seros-LLC/.github/main/profile/seros-consulting-banner.png)
 
 # Seros product specification
 
