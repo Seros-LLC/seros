@@ -9,8 +9,8 @@ requests, and decisions already written in team chat into proposed, owned, dated
 team's tracker.
 
 > Status: specified; the product implementation is paused. This repository is the design
-> record, not a deployed service. The implementation lives in
-> [Seros-LLC/app](https://github.com/Seros-LLC/app), which is not deployed or sold.
+> record, not a deployed service. The former implementation repository has been retired;
+> see [the implementation archive](docs/APP-ARCHIVE.md).
 
 The specification is retained because its engineering decisions remain useful: every task
 write requires human confirmation, customer content is excluded from logs, and every model
@@ -167,8 +167,8 @@ npm test
 ```
 
 The spike test command runs the TypeScript type checker, the tenant-scope lint, and its
-Node test suite. The maintained application has separate setup and verification instructions
-in the [Seros-LLC/app README](https://github.com/Seros-LLC/app#readme).
+Node test suite. The application implementation was retired after its essential facts were
+preserved in [docs/APP-ARCHIVE.md](docs/APP-ARCHIVE.md).
 
 ### Check documentation locally
 
@@ -183,6 +183,8 @@ to `main`, pull requests, and manual dispatches.
 .
 ├── docs/
 │   ├── adr/                 Architecture decision records
+│   ├── APP-ARCHIVE.md       Retired implementation facts and verification record
+│   ├── APP-PRODUCT-BRIEF.md Historical product brief
 │   ├── ARCHITECTURE.md      Components, data flow, trust boundaries, failure behavior
 │   ├── DATA-MODEL.md        Entities, classifications, and retention
 │   ├── IMPLEMENTATION-BRIEF.md
@@ -201,9 +203,9 @@ to `main`, pull requests, and manual dispatches.
 └── README.md                  This overview
 ```
 
-Application code does not belong in this repository. The separate implementation repository
-is [Seros-LLC/app](https://github.com/Seros-LLC/app). The `spikes/` directory is archived
-comparison evidence and should not be imported by application code.
+Application code does not belong in this repository. The `spikes/` directory is archived
+comparison evidence and should not be imported by application code. The retired implementation
+is summarized in [docs/APP-ARCHIVE.md](docs/APP-ARCHIVE.md).
 
 ## Development workflow
 

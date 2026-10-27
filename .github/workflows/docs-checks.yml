@@ -1,8 +1,8 @@
 name: docs-checks
 
-# This repository is the specification of a paused product. The application (TypeScript on
-# Node, see docs/adr/0005-language-and-runtime-typescript.md) lives in Seros-LLC/app, so CI
-# here checks documents rather than builds. The checks use only tools already on the runner.
+# This repository is the specification and implementation archive of a paused product. The
+# former TypeScript application was retired; CI here checks documents rather than builds. The
+# checks use only tools already on the runner.
 
 on:
   push:

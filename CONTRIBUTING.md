@@ -9,10 +9,10 @@ contributions. Read it first; this file only adds what is specific to the produc
 
 This repository is the specification of a paused product. The language and runtime were
 chosen: [ADR 0005](docs/adr/0005-language-and-runtime-typescript.md) records TypeScript on
-Node and supersedes [ADR 0003](docs/adr/0003-language-and-runtime.md). The application lives
-in [Seros-LLC/app](https://github.com/Seros-LLC/app), which is public. Application code
-belongs there, not here; the only code in this repository is the archived evidence under
-[`spikes/`](spikes/README.md).
+Node and supersedes [ADR 0003](docs/adr/0003-language-and-runtime.md). The former application
+implementation was retired; its essential facts are preserved in
+[docs/APP-ARCHIVE.md](docs/APP-ARCHIVE.md). The only runnable code here is the archived
+comparison evidence under [`spikes/`](spikes/README.md).
 
 ## Repository-specific rules
 
