@@ -1,147 +1,274 @@
-# Seros — product repository
+# Seros product specification
 
-This repository is the specification of a paused Seros product: a service designed to turn
-what a team already said in chat into confirmed, owned, dated tasks in the tracker the team
-already used.
+[![Documentation checks](https://github.com/Seros-LLC/seros/actions/workflows/docs-checks.yml/badge.svg)](https://github.com/Seros-LLC/seros/actions/workflows/docs-checks.yml)
 
-**Status: specified; the implementation is paused.** This repository is the specification.
-The application itself lives in [Seros-LLC/app](https://github.com/Seros-LLC/app), built
-against the brief in [docs/IMPLEMENTATION-BRIEF.md](docs/IMPLEMENTATION-BRIEF.md). Seros,
-LLC is now an [AI and agentic consulting firm](https://seros.dev) and this product is not
-deployed or sold — see [COMPANY.md](COMPANY.md). The specification is published because the
-engineering reasoning in it stands on its own.
+Seros is a documentation-first specification for a paused product that turns commitments,
+requests, and decisions already written in team chat into proposed, owned, dated tasks in a
+team's tracker.
 
-The language question is settled: [ADR 0005](docs/adr/0005-language-and-runtime-typescript.md)
-records TypeScript on Node and supersedes [ADR 0003](docs/adr/0003-language-and-runtime.md),
-with the two competing spikes committed under [`spikes/`](spikes) and an honest account of
-which parts of 0003's method were skipped. The model provider question is formally open:
-[ADR 0004](docs/adr/0004-model-provider-strategy.md) is still PROPOSED. In practice, before
-the application was paused its production deployment ran Google Gemini (via the
-OpenAI-compatible endpoint) in front of the local-Qwen fallback, through the abstraction and
-ordered transport chain that ADR requires. Development and tests run local Qwen 7b or the
-deterministic fake.
+> Status: specified; the product implementation is paused. This repository is the design
+> record, not a deployed service. The implementation lives in
+> [Seros-LLC/app](https://github.com/Seros-LLC/app), which is not deployed or sold.
 
-What this repository holds is the specification: what v0 was, what the data looks like,
-what the security controls had to be, what the integrations could touch, how a
-non-deterministic system gets tested, and what to do at 3am when one person is on call.
+The specification is retained because its engineering decisions remain useful: every task
+write requires human confirmation, customer content is excluded from logs, and every model
+call is metered.
 
-## The v0 loop
+## What the product was designed to do
 
-One loop, end to end. Everything else in this repository was written to serve it.
+The v0 loop is deliberately narrow:
 
-```
-  Slack workspace
-        |
-        |  (1) read only the channels the admin picked
-        v
-  +--------------+     (2) batch      +---------------------+
-  | Slack ingest | -----------------> | Detection pipeline  |
-  +--------------+                    |  cheap pass first,  |
-        ^                             |  careful pass only  |
-        |                             |  on survivors       |
-        |                             +----------+----------+
-        |                                        | (3) candidate
-        |                                        v
-        |                             +---------------------+
-        |                             | Draft store         |
-        |                             |  title, outcome,    |
-        |                             |  owner, due, source |
-        |                             +----------+----------+
-        |                                        | (4) shown in queue
-        |                                        v
-        |                             +---------------------+
-        |     (6) permalink back      | HUMAN CONFIRMATION  |
-        +-----------------------------|  confirm / edit /   |
-                                      |  reject             |
-                                      +----------+----------+
-                                                 | (5) only now
-                                                 v
-                                      +---------------------+
-                                      | Tracker writer      | --> Tracker
-                                      +---------------------+
+1. Read only the channels an administrator selected.
+2. Normalize messages and replay up to 30 days of history at connection time.
+3. Detect commitments, requests, and decisions using a batched, two-pass pipeline.
+4. Draft a task with a title, outcome, acceptance condition, suggested owner, optional due
+   date, and source permalink.
+5. Show the draft in a confirmation queue.
+6. After an authenticated human confirms or edits it, create the task in one connected
+   tracker and reply with its link in the source thread.
 
-  Every step writes to the audit log. Every model call writes to the meter.
-```
-
-The same loop as a diagram, for rendering:
+The replay is the same pipeline pointed at recent history: the default design window is
+7 days, with up to 30 days supported at connection time. It is not a separate inference
+path.
 
 ```mermaid
 flowchart LR
-    S[Slack: selected channels] --> I[Ingest]
+    S[Selected chat channels] --> I[Ingest and normalize]
     I --> D[Detection: cheap pass, then careful pass]
-    D --> DR[Draft store]
-    DR --> C{Human confirmation}
+    D --> DS[Draft store]
+    DS --> C{Human confirmation}
     C -- confirm or edit --> W[Tracker writer]
-    C -- reject --> R[Rejection record, feeds routing later]
-    W --> T[Tracker: task created]
-    W --> B[Reply in source thread with the task link]
-    I -.-> A[Audit log]
-    D -.-> M[Action meter]
+    C -- reject --> R[Rejection record]
+    W --> T[Tracker task]
+    W --> B[Reply with task link]
+    I -.-> A[Append-only audit log]
+    D -.-> M[Action meter and budget]
     C -.-> A
     W -.-> A
 ```
 
-Plus the 7-day replay: run the same detection over the last seven days of history at
-connect time, and show the gap between what was committed and what was tracked. The replay
-was not a separate feature: it is the same pipeline pointed at the past.
+## Non-negotiable design rules
 
-## The three rules the codebase must keep
+These are product invariants, not style preferences:
 
-These are not style preferences. They were the product's draft commitments, written for its
-terms, product pages and data processing agreement before the product was paused; they are
-kept here as the historical basis of the design. Code that breaks one of them is a defect
-regardless of whether a test fails.
+1. **Human confirmation before any write.** No code path may create, update, assign, or
+   comment in a customer's tracker or chat without a recorded confirmation tied to a real,
+   authenticated member. The tracker writer accepts a confirmation id, never a draft id.
+2. **No customer content in logs.** Logs contain identifiers, counts, durations, and error
+   classes. They do not contain message text, task titles, quoted context, names, or email
+   addresses. Structured logging uses an explicit allowlist.
+3. **Every model call is metered.** Each provider call records its workspace, purpose, model,
+   prompt version, token counts, estimated cost, latency, and outcome. The provider
+   abstraction checks budgets before making the network call.
 
-| Rule | What it means in code | Where it was committed (historical) |
-|---|---|---|
-| **1. Human confirmation before any write** | No code path creates, updates, assigns or comments on anything in a customer's tracker or chat without a recorded `Confirmation` row carrying a real user id. There is no configuration flag that disables this in v0. | ADR 0002; draft product terms; v0 scope |
-| **2. No customer content in logs** | Log identifiers, counts, durations, error classes. Never message text, task titles, quoted context, user names or email addresses. Structured logging with an allowlist of fields, not a denylist. | Draft security page; draft DPA data minimisation |
-| **3. Every model call is metered** | No provider call without a recorded `ActionMeter` row carrying workspace, purpose, model, token counts and estimated cost, written in the same transaction boundary as the call result. An unmetered call is an unbounded liability. | ADR 0004; cost per action was the product's key unit cost |
+The failure rule is: degrade toward doing nothing, never toward acting without a human.
 
-Rule 1 has a mechanical form: the tracker writer takes a confirmation id, not a draft id.
-Rule 3 has a mechanical form: the provider client is the only thing allowed to open a
-socket to a model API, and it refuses to run without a meter context.
+## Technology stack
 
-## Where the documentation lives
+### Chosen
 
-| File | What it answers |
-|---|---|
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | What the v0 system is made of, how data flows, where the trust boundaries and the model calls are, what happens when something is down, how cost is contained |
-| [docs/DATA-MODEL.md](docs/DATA-MODEL.md) | The entities, their fields, what counts as customer content, and the retention class of every table |
-| [docs/SECURITY-CONTROLS.md](docs/SECURITY-CONTROLS.md) | Each security commitment drafted for the product mapped to the engineering control that would satisfy it, and its status |
-| [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) | Scopes requested from Slack and the tracker, why each one, what is read, what is written, what breaks without it |
-| [docs/TESTING-STRATEGY.md](docs/TESTING-STRATEGY.md) | How to test a system whose core is a language model |
-| [docs/RUNBOOK.md](docs/RUNBOOK.md) | On-call for one person |
-| [docs/adr/](docs/adr/0001-record-architecture-decisions.md) | Decisions, with their context and consequences, in the order they were made |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | How to work in this repository |
+- **TypeScript on Node.js** — accepted in [ADR 0005](docs/adr/0005-language-and-runtime-typescript.md).
+- **Drizzle ORM** over SQLite for development, with a Postgres-shaped schema.
+- **Server-rendered pages** with no client framework for the specified v0 application.
+- **Provider abstraction** from the first model call. Model tiers are named by role (`cheap`,
+  `standard`, and optionally `careful`), not by vendor.
 
-Material outside this repository (the application, the website and its legal pages) is
-referenced by repository name or absolute URL rather than by relative link, because a
-relative link across repository boundaries breaks the moment this repository is cloned on
-its own.
+The archived TypeScript spike requires Node.js `>=22.18`; this is the only version constraint
+recorded in the repository's executable package manifest.
 
-## Running the application
+### Deliberately open or historical
 
-The application has its own setup, configuration and test instructions in the
-[Seros-LLC/app README](https://github.com/Seros-LLC/app#readme). The only thing to run in
-this repository is the documentation check in
-[.github/workflows/docs-checks.yml](.github/workflows/docs-checks.yml).
+- [ADR 0004](docs/adr/0004-model-provider-strategy.md) is **proposed, not accepted**. No
+  model provider is formally chosen by this repository.
+- The v0 tracker, cloud, queue product, and production database product were not fixed by the
+  specification.
+- Before the pause, the separate application used a hosted model in front of a local Qwen
+  fallback. That is historical operational context, not an accepted architecture decision.
 
-## Assumptions in this repository
+## Architecture
 
-Every document here marks its assumptions. The repository-wide ones:
+The intended system has three boundaries:
 
-- **A1.** v0 is Slack plus exactly one tracker. The choice of tracker was not made in this
-  repository.
-- **A2.** Deployment is multi-tenant, cloud, US-hosted. No self-hosting, no on-premise.
-- **A3.** Model inference is bought from third-party providers. No model is trained or
-  fine-tuned on customer content, ever, and no customer content is sent to a provider on
-  terms that allow training.
-- **A4.** One engineer. Every design here is judged partly on whether one person can
-  operate it while asleep.
-- **A5.** Customer content is regulated personal data in some jurisdictions even when it
-  is only work chat, so retention and deletion are engineering requirements, not features.
+- **Customer systems:** selected chat channels and one connected tracker.
+- **Authenticated edge:** webhook receiver plus the confirmation API and web application.
+- **Tenant-scoped core:** normalization, detection, drafting, deduplication, draft storage,
+  confirmation, tracker writes, roster synchronization, queues, metering, and audit logging.
 
-## Licence
+The model boundary receives only minimized input through the provider abstraction. The core has
+separate read and write paths for the tracker. Detection can produce drafts, but it cannot
+write to a customer system; only the confirmation queue can enqueue a tracker write.
 
-Proprietary. See [LICENSE](LICENSE).
+The main processing chain is:
+
+```text
+SourceMessage -> Candidate -> Draft -> Confirmation -> Task
+```
+
+Every tenant-owned record carries a workspace id in its key path. Background jobs use a scoped
+accessor that refuses to build a query without a workspace id. The design also calls for row
+level security where the selected database supports it.
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for components, trust boundaries, queues,
+idempotency, failure behavior, tenancy, and cost controls. The entities and retention classes
+are defined in [docs/DATA-MODEL.md](docs/DATA-MODEL.md).
+
+## Key features in the specification
+
+- Explicit channel allowlists and least-privilege integration scopes.
+- Live ingest plus a bounded historical replay at connection time.
+- Cheap-model-first detection with batching, pre-filters, bounded context, and abstention.
+- Draft deduplication against open tracker tasks without granting the dedupe path write
+  access.
+- Human confirmation from the web queue or a signed chat action.
+- Idempotent tracker writes keyed by the confirmation id; ambiguous writes go to review
+  rather than being retried blindly.
+- Append-only, exportable, content-free audit events.
+- Per-workspace inference budgets and a global spend circuit breaker.
+- Retention sweeps, disconnect cleanup, person-data deletion, and workspace deletion paths.
+- Versioned prompts and offline evaluation on a golden set before model-affecting changes.
+
+These are specified behaviors, not a claim that the paused product currently provides them.
+
+## Getting started
+
+This repository contains documentation and archived spike evidence. No application service is
+started from the repository root, and no production deployment is available.
+
+### Read the specification
+
+```bash
+git clone https://github.com/Seros-LLC/seros.git
+cd seros
+```
+
+Start with:
+
+1. This README for status, invariants, and the system loop.
+2. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the system design.
+3. [docs/DATA-MODEL.md](docs/DATA-MODEL.md) for entities and retention.
+4. [docs/SECURITY-CONTROLS.md](docs/SECURITY-CONTROLS.md) for control mappings.
+5. [docs/TESTING-STRATEGY.md](docs/TESTING-STRATEGY.md) for deterministic tests and model
+   evaluation.
+6. [docs/RUNBOOK.md](docs/RUNBOOK.md) for failure handling and on-call expectations.
+7. [docs/adr/](docs/adr/0001-record-architecture-decisions.md) for decisions and their
+   evidence.
+
+### Run the archived TypeScript spike (optional)
+
+The spike is evidence for ADR 0005. It is not maintained and must not be used in production.
+It requires Node.js `>=22.18`:
+
+```bash
+cd spikes/typescript
+npm install
+npm test
+```
+
+The spike test command runs the TypeScript type checker, the tenant-scope lint, and its
+Node test suite. The maintained application has separate setup and verification instructions
+in the [Seros-LLC/app README](https://github.com/Seros-LLC/app#readme).
+
+### Check documentation locally
+
+The repository's CI workflow checks relative Markdown links, ADR status sections, committed
+secret patterns, and implemented security controls. The canonical commands are in
+[.github/workflows/docs-checks.yml](.github/workflows/docs-checks.yml); CI runs them on pushes
+to `main`, pull requests, and manual dispatches.
+
+## Project structure
+
+```text
+.
+├── docs/
+│   ├── adr/                 Architecture decision records
+│   ├── ARCHITECTURE.md      Components, data flow, trust boundaries, failure behavior
+│   ├── DATA-MODEL.md        Entities, classifications, and retention
+│   ├── IMPLEMENTATION-BRIEF.md
+│   ├── INTEGRATIONS.md      External scopes and failure behavior
+│   ├── RUNBOOK.md            Operational response for the intended service
+│   ├── SECURITY-CONTROLS.md Control-to-implementation mapping
+│   └── TESTING-STRATEGY.md  Deterministic tests and model evaluation
+├── spikes/
+│   ├── typescript/           Chosen-runtime evidence; archived
+│   └── python/               Alternative-runtime evidence; archived
+├── .github/workflows/
+│   └── docs-checks.yml       Documentation and repository safety checks
+├── CONTRIBUTING.md            Repository-specific contribution rules
+├── COMPANY.md                 Repository context and scope
+├── LICENSE                    Proprietary terms
+└── README.md                  This overview
+```
+
+Application code does not belong in this repository. The separate implementation repository
+is [Seros-LLC/app](https://github.com/Seros-LLC/app). The `spikes/` directory is archived
+comparison evidence and should not be imported by application code.
+
+## Development workflow
+
+This is a documentation-first repository. Changes follow these rules:
+
+- Change a product principle through an ADR, not an untracked prose edit.
+- Do not describe a vendor, framework, language, or model as chosen unless an accepted ADR
+  supports it.
+- Mark assumptions explicitly with `ASSUMPTION`.
+- Do not invent benchmarks, costs, accuracy figures, or customer results.
+- Keep customer content out of fixtures, examples, screenshots, and issue descriptions.
+- Keep relative Markdown links within this repository; cross-repository references use the
+  repository URL.
+- A security control may be marked `Implemented` only when it links to an existing artefact.
+
+CI is documentation-focused rather than an application build. The workflow runs on pull
+requests and pushes to `main`. No branching strategy or release cadence is prescribed in this
+repository; follow the organization-wide contribution guidance for issues, pull requests,
+commits, review, and security reporting.
+
+## Coding and writing standards
+
+- Use Markdown with ATX headings.
+- Prefer tables when they make a comparison or mapping clearer than prose.
+- Write plain, concrete sentences that remain readable during an incident.
+- State unknowns and assumptions instead of silently turning them into facts.
+- Use no emoji in documents or commit messages.
+- Preserve the distinction between a specification, an implementation, and a deployed or
+  measured result.
+
+The detailed repository-specific rules are in [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Testing and verification
+
+The testing strategy separates deterministic plumbing from model judgment:
+
+- **Deterministic code** gets ordinary automated assertions for webhook verification,
+  idempotency, confirmation gates, tenancy, authorization, logging hygiene, metering, budget
+  caps, retention, deletion, and integration failure handling.
+- **Model behavior** is measured against a versioned golden set. Exact model output strings are
+  not asserted.
+- Tests must run offline and must not require a live model provider or live customer API.
+- Third-party integrations use scrubbed recorded interactions in CI; a separate sandbox
+  contract test may exercise the real loop without touching customer workspaces.
+- Prompt changes require an offline evaluation attached to the pull request, including the
+  corpus version, model and tier, before/after metrics, cost, and changed decisions.
+- Precision must not regress against the established baseline. No absolute precision target is
+  claimed before a first baseline run.
+
+The implementation repository has its own test and verification gate. This repository's CI
+checks the documentation and control mappings described above.
+
+## Contributing
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before editing. The organization-wide guide in
+[Seros-LLC/.github](https://github.com/Seros-LLC/.github) covers the shared contribution,
+review, security, and ownership rules.
+
+For a change to the specification:
+
+1. Identify the source document and the invariant or assumption affected.
+2. Update the relevant specification and any cross-references.
+3. Add or update an ADR when the change is a product or architecture decision.
+4. Keep links relative and run the documentation checks.
+5. Do not present archived spike evidence or intended behavior as live product capability.
+
+## License
+
+This repository is proprietary. See [LICENSE](LICENSE) for the terms governing viewing,
+quoting, contributions, copying, modification, and distribution.
