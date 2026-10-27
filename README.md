@@ -1,3 +1,5 @@
+![Seros, LLC — AI and agentic consulting. Advice in writing. Builds to a fixed scope.](https://raw.githubusercontent.com/Seros-LLC/.github/main/profile/seros-banner.png)
+
 # Seros product specification
 
 [![Documentation checks](https://github.com/Seros-LLC/seros/actions/workflows/docs-checks.yml/badge.svg)](https://github.com/Seros-LLC/seros/actions/workflows/docs-checks.yml)
